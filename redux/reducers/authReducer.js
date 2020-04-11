@@ -7,8 +7,10 @@ import {
     AUTH_RESET_PASSWORD,
 } from '../action-types/authActionTypes';
 
+import { setCookie, removeCookie, getCookie } from '../../utils/Cookie';
+
 const initialState = {
-    isAuthenticated: false,
+    isAuthenticated: null,
 };
 
 const authReducer = (state = initialState, {type, payload = null}) => {
@@ -28,29 +30,30 @@ const authReducer = (state = initialState, {type, payload = null}) => {
 };
 
 function login(state, payload) {
-    localStorage.setItem('access_token', payload);
+    setCookie('token', payload);
     HTTP.defaults.headers.common['Authorization'] = `Bearer ${payload}`;
 
     return {
         ...state,
-        isAuthenticated: payload,
+        isAuthenticated: true,
     };
 }
 
 function checkAuth(state) {
-    state = Object.assign({}, state, {
-        isAuthenticated: !!localStorage.getItem('access_token'),
-    });
+    const isAuthenticated = !!getCookie('token');
 
-    if (state.isAuthenticated) {
-        HTTP.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`;
+    if (isAuthenticated) {
+        HTTP.defaults.headers.common['Authorization'] = `Bearer ${getCookie('token')}`;
     }
 
-    return state;
+    return {
+        ...state,
+        isAuthenticated: isAuthenticated
+    };
 }
 
 function logout(state) {
-    localStorage.removeItem('access_token');
+    removeCookie('token');
 
     return {
         ...state,

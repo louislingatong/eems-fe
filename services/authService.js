@@ -9,14 +9,17 @@ import * as authActions from '../redux/actions/authActions';
  */
 export function fetchUser() {
     return dispatch => {
-        return Http.get('/user')
-            .then((res) => {
-                const data = res.data;
-                dispatch(authActions.authUser(data));
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        new Promise((resolve, reject) => {
+            Http.get('/user')
+                .then((res) => {
+                    const data = res.data;
+                    dispatch(authActions.authUser(data));
+                    return resolve(data);
+                })
+                .catch((err) => {
+                    return reject(err);
+                });
+        });
     };
 }
 
@@ -36,15 +39,18 @@ export function login(credentials) {
 
         const data = {...credentials, ...config};
 
-        return Http.post('/oauth/token', data)
-            .then((res) => {
-                const data = res.data;
-                dispatch(authActions.authLogin(data.access_token));
-                Router.push('/');
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        new Promise((resolve, reject) => {
+            Http.post('/oauth/token', data)
+                .then((res) => {
+                    const data = res.data;
+                    dispatch(authActions.authLogin(data.access_token));
+                    Router.push('/dashboard');
+                    return resolve(data);
+                })
+                .catch((err) => {
+                    return reject(err);
+                });
+        });
 
     };
 }
@@ -56,14 +62,18 @@ export function login(credentials) {
  */
 export function logout() {
     return dispatch => {
-        return Http.delete('/api/oauth/token')
-            .then(() => {
-                dispatch(authActions.authLogout());
-                Router.push('/login');
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        new Promise((resolve, reject) => {
+            Http.delete('/api/oauth/token')
+                .then((res) => {
+                    const data = res.data;
+                    dispatch(authActions.authLogout());
+                    Router.push('/login');
+                    return resolve(data);
+                })
+                .catch((err) => {
+                    return reject(err);
+                });
+        });
     };
 }
 
