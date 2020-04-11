@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Layout from '../components/layout';
 import { login } from '../services/authService';
+import '../scss/styles.scss';
 
 class Login extends React.Component {
     constructor(props) {
@@ -32,7 +32,7 @@ class Login extends React.Component {
 
     render() {
         return (
-            <Layout title="Login">
+            <div title="Login">
                 <h3 className="title is-3">Login</h3>
                 <form onSubmit={this.handleSubmit} className="container" style={{width: '540px'}}>
                     <div className="field">
@@ -78,14 +78,14 @@ class Login extends React.Component {
                         </p>
                     </div>
                 </form>
-            </Layout>
+            </div>
         );
     }
 }
 
 const mapStateToProps = (state) => (
     {
-        isAuthenticated: state.authentication.isAuthenticated
+        isAuthenticated: state.auth.isAuthenticated
     }
 );
 
